@@ -12,5 +12,5 @@ go get github.com/go-gem/log
 ```
 Requires Go 1.5 or above.
 
-##　Usage
-See [Example](log_test.go)
+## Usage
+See [Example](https://godoc.org/github.com/go-gem/log#example-Logger)
