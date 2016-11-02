@@ -10,6 +10,7 @@ a simple and leveled logging package written in Go(golang), it is an extended ed
 ```
 go get github.com/go-gem/log
 ```
+Requires Go 1.5 or above.
 
 ##　Usage
 See [Example](log_test.go)
