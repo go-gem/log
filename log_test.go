@@ -24,7 +24,7 @@ func TestStdLogger_Fatal(t *testing.T) {
 				t.Fatalf("Unexpected result: got %q want %q", buf.String(), want)
 			}
 		} else {
-			t.Fatal("F")
+			t.Fatal("Failed to catch panic.")
 		}
 	}()
 
@@ -44,7 +44,7 @@ func TestStdLogger_Fatalf(t *testing.T) {
 				t.Fatalf("Unexpected result: got %q want %q", buf.String(), want)
 			}
 		} else {
-			t.Fatal("F")
+			t.Fatal("Failed to catch panic.")
 		}
 	}()
 
@@ -64,7 +64,7 @@ func TestStdLogger_Fatalln(t *testing.T) {
 				t.Fatalf("Unexpected result: got %q want %q", buf.String(), want)
 			}
 		} else {
-			t.Fatal("F")
+			t.Fatal("Failed to catch panic.")
 		}
 	}()
 
