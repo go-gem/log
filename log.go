@@ -2,7 +2,46 @@
 // Use of this source code is governed by a MIT license
 // that can be found in the LICENSE file.
 
-// Package log implements a simple logging package.
+/*
+Package log is a simple and leveled logging package written in Go(golang),
+it is an extended edition of the standard logging package.
+
+Supported levels:
+	* DEBUG
+	* INFO
+	* WARNING
+	* ERROR
+	* FATAL
+
+API:
+	* Debug, Debugf, Debugln
+
+	* Info, Infof, Infoln
+
+	* Warning, Warningf, Warningln
+
+	* Error, Errorf, Errorln
+
+	* Fatal, Fatalf, Fatalln
+
+Example:
+	package main
+
+	import (
+		"github.com/go-gem/log"
+		"os"
+	)
+
+	func main() {
+		var logger log.Logger
+
+		logger = log.New(os.Stderr, log.Lshortfile, log.LevelWarning | log.LevelError)
+
+		logger.Debug("debug log info.") // ignored.
+		logger.Warning("warning log info.")
+		logger.Error("error log info.")
+	}
+*/
 package log
 
 import (
@@ -80,6 +119,12 @@ type Logger interface {
 }
 
 // New returns a StdLogger instance.
+//
+// See the standard logging package for details of flags.
+// Level should be used like the following:
+//	LevelWarning | LevelError
+// it means that the warning and error's log info
+// will not be ignored.
 func New(out io.Writer, flag, level int) *StdLogger {
 	return &StdLogger{
 		Logger: log.New(out, "", flag),
@@ -103,7 +148,7 @@ func (l *StdLogger) print(level int, prefix string, v ...interface{}) {
 	if !l.ignore(level) {
 		l.mu.Lock()
 		l.Logger.SetPrefix(prefix)
-		l.Output(3, fmt.Sprint(v...))
+		l.Logger.Output(3, fmt.Sprint(v...))
 		l.mu.Unlock()
 	}
 }
@@ -112,7 +157,7 @@ func (l *StdLogger) printf(level int, prefix, format string, v ...interface{}) {
 	if !l.ignore(level) {
 		l.mu.Lock()
 		l.Logger.SetPrefix(prefix)
-		l.Output(3, fmt.Sprintf(format, v...))
+		l.Logger.Output(3, fmt.Sprintf(format, v...))
 		l.mu.Unlock()
 	}
 }
@@ -121,7 +166,7 @@ func (l *StdLogger) println(level int, prefix string, v ...interface{}) {
 	if !l.ignore(level) {
 		l.mu.Lock()
 		l.Logger.SetPrefix(prefix)
-		l.Output(3, fmt.Sprintln(v...))
+		l.Logger.Output(3, fmt.Sprintln(v...))
 		l.mu.Unlock()
 	}
 }
@@ -188,15 +233,36 @@ func (l *StdLogger) Errorln(v ...interface{}) {
 
 // Fatal implements Logger's Fatal function.
 func (l *StdLogger) Fatal(v ...interface{}) {
-	l.print(LevelFatal, prefixFatal, v...)
+	if !l.ignore(LevelFatal) {
+		l.mu.Lock()
+		l.Logger.SetPrefix(prefixFatal)
+		s := fmt.Sprint(v...)
+		l.Logger.Output(2, s)
+		l.mu.Unlock()
+		panic(s)
+	}
 }
 
 // Fatalf implements Logger's Fatalf function.
 func (l *StdLogger) Fatalf(format string, v ...interface{}) {
-	l.printf(LevelFatal, prefixFatal, format, v...)
+	if !l.ignore(LevelFatal) {
+		l.mu.Lock()
+		l.Logger.SetPrefix(prefixFatal)
+		s := fmt.Sprintf(format, v...)
+		l.Logger.Output(2, s)
+		l.mu.Unlock()
+		panic(s)
+	}
 }
 
 // Fatalln implements Logger's Fatalln function.
 func (l *StdLogger) Fatalln(v ...interface{}) {
-	l.println(LevelFatal, prefixFatal, v...)
+	if !l.ignore(LevelFatal) {
+		l.mu.Lock()
+		l.Logger.SetPrefix(prefixFatal)
+		s := fmt.Sprintln(v...)
+		l.Logger.Output(2, s)
+		l.mu.Unlock()
+		panic(s)
+	}
 }
