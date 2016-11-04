@@ -12,5 +12,23 @@ go get github.com/go-gem/log
 ```
 Requires Go 1.5 or above.
 
-## Usage
-See [Example](https://godoc.org/github.com/go-gem/log#example-Logger)
+## Example
+```
+package main
+
+import (
+	"github.com/go-gem/log"
+	"os"
+)
+
+func main() {
+	var logger log.Logger
+
+	logger = log.New(os.Stderr, log.Lshortfile, log.LevelWarning | log.LevelError)
+
+	logger.Debug("debug log.") // ignored.
+	logger.Info("info log.") // ignored.
+	logger.Warning("warning log.")
+	logger.Error("error log.")
+}
+```
