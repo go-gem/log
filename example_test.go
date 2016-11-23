@@ -2,19 +2,21 @@
 // Use of this source code is governed by a MIT license
 // that can be found in the LICENSE file.
 
-package log_test
+package log
 
 import (
 	"bytes"
 	"fmt"
-	"github.com/go-gem/log"
 )
 
 func ExampleLogger() {
 	var buf bytes.Buffer
 
-	var logger log.Logger
-	logger = log.New(&buf, log.Lshortfile, log.LevelWarning|log.LevelError|log.LevelFatal)
+	logger := New(&buf, Lshortfile, LevelWarning|LevelError|LevelFatal)
+
+	logger.Print("print")
+	logger.Printf("%s\n", "printf")
+	logger.Println("println")
 
 	logger.Debug("debug")           // ignored.
 	logger.Debugf("%s\n", "debugf") // ignored.
@@ -34,10 +36,13 @@ func ExampleLogger() {
 
 	fmt.Print(&buf)
 	// Output:
-	// WARNING: example_test.go:27: warning
-	// WARNING: example_test.go:28: warningf
-	// WARNING: example_test.go:29: warningln
-	// ERROR: example_test.go:31: error
-	// ERROR: example_test.go:32: errorf
-	// ERROR: example_test.go:33: errorln
+	// example_test.go:17: print
+	// example_test.go:18: printf
+	// example_test.go:19: println
+	// WARN example_test.go:29: warning
+	// WARN example_test.go:30: warningf
+	// WARN example_test.go:31: warningln
+	// ERRO example_test.go:33: error
+	// ERRO example_test.go:34: errorf
+	// ERRO example_test.go:35: errorln
 }
