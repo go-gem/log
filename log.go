@@ -214,8 +214,8 @@ func (l *Logger) Println(v ...interface{}) {
 	l.Output(2, fmt.Sprintln(v...), prefixEmpty)
 }
 
-// Printf calls l.Output to print to the logger.
-// Arguments are handled in the manner of fmt.Printf.
+// Debug calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func (l *Logger) Debug(v ...interface{}) {
 	if l.ignore(LevelDebug) {
 		return
@@ -223,7 +223,7 @@ func (l *Logger) Debug(v ...interface{}) {
 	l.Output(2, fmt.Sprint(v...), prefixDebug)
 }
 
-// Printf calls Output to print to the standard logger.
+// Debugf calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func (l *Logger) Debugf(format string, v ...interface{}) {
 	if l.ignore(LevelDebug) {
@@ -232,7 +232,7 @@ func (l *Logger) Debugf(format string, v ...interface{}) {
 	l.Output(2, fmt.Sprintf(format, v...), prefixDebug)
 }
 
-// Println calls Output to print to the standard logger.
+// Debugln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func (l *Logger) Debugln(v ...interface{}) {
 	if l.ignore(LevelDebug) {

@@ -54,7 +54,7 @@ func ExampleLogger() {
 	// FATA example_test.go:39: fatalln
 }
 
-func ExampleLogger2() {
+func Example() {
 	var buf bytes.Buffer
 
 	SetLevels(LevelWarning | LevelError | LevelFatal)
