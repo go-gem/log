@@ -1,4 +1,5 @@
-// Copyright 2009 The Go Authors. All rights reserved.
+// Copyright (c) 2009 The Go Authors and 2016, Gem Authors
+// All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -20,7 +21,7 @@ const (
 	Rdate         = `[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]`
 	Rtime         = `[0-9][0-9]:[0-9][0-9]:[0-9][0-9]`
 	Rmicroseconds = `\.[0-9][0-9][0-9][0-9][0-9][0-9]`
-	Rline         = `(55|74):` // must update if the calls to l.Printf / l.Print below move
+	Rline         = `(56|58):` // must update if the calls to l.Printf / l.Print below move
 	Rlongfile     = `.*/[A-Za-z0-9_\-]+\.go:` + Rline
 	Rshortfile    = `[A-Za-z0-9_\-]+\.go:` + Rline
 )
@@ -142,6 +143,22 @@ func TestEmptyPrintCreatesLine(t *testing.T) {
 	output := b.String()
 	if n := strings.Count(output, "\n"); n != 2 {
 		t.Errorf("expected 2 lines, got %d", n)
+	}
+}
+
+func TestSetFlags(t *testing.T) {
+	flag := Lshortfile
+	SetFlags(flag)
+	if flag != Flags() {
+		t.Errorf("expected falg %d, got %d", flag, Flags())
+	}
+}
+
+func TestSetLevels(t *testing.T) {
+	level := LevelDebug
+	SetLevels(level)
+	if level != Levels() {
+		t.Errorf("expected level %d, got %d", level, Levels())
 	}
 }
 

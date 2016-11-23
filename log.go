@@ -3,7 +3,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package log implements a simple leveling logging package. It defines a type,
+// Package log implements a simple leveled logging package. It defines a type,
 // Logger, with methods for formatting output. It also has a predefined 'standard'
 // Logger accessible through helper functions Print[f|ln], Fatal[f|ln], and
 // Panic[f|ln], which are easier to use than creating a Logger manually.
@@ -214,6 +214,8 @@ func (l *Logger) Println(v ...interface{}) {
 	l.Output(2, fmt.Sprintln(v...), prefixEmpty)
 }
 
+// Printf calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Printf.
 func (l *Logger) Debug(v ...interface{}) {
 	if l.ignore(LevelDebug) {
 		return
@@ -239,6 +241,8 @@ func (l *Logger) Debugln(v ...interface{}) {
 	l.Output(2, fmt.Sprintln(v...), prefixDebug)
 }
 
+// Info calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func (l *Logger) Info(v ...interface{}) {
 	if l.ignore(LevelInfo) {
 		return
@@ -246,7 +250,7 @@ func (l *Logger) Info(v ...interface{}) {
 	l.Output(2, fmt.Sprint(v...), prefixInfo)
 }
 
-// Printf calls Output to print to the standard logger.
+// Infof calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func (l *Logger) Infof(format string, v ...interface{}) {
 	if l.ignore(LevelInfo) {
@@ -255,7 +259,7 @@ func (l *Logger) Infof(format string, v ...interface{}) {
 	l.Output(2, fmt.Sprintf(format, v...), prefixInfo)
 }
 
-// Println calls Output to print to the standard logger.
+// Infoln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func (l *Logger) Infoln(v ...interface{}) {
 	if l.ignore(LevelInfo) {
@@ -264,6 +268,8 @@ func (l *Logger) Infoln(v ...interface{}) {
 	l.Output(2, fmt.Sprintln(v...), prefixInfo)
 }
 
+// Warning calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func (l *Logger) Warning(v ...interface{}) {
 	if l.ignore(LevelWarning) {
 		return
@@ -271,7 +277,7 @@ func (l *Logger) Warning(v ...interface{}) {
 	l.Output(2, fmt.Sprint(v...), prefixWarning)
 }
 
-// Printf calls Output to print to the standard logger.
+// Warningf calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func (l *Logger) Warningf(format string, v ...interface{}) {
 	if l.ignore(LevelWarning) {
@@ -280,7 +286,7 @@ func (l *Logger) Warningf(format string, v ...interface{}) {
 	l.Output(2, fmt.Sprintf(format, v...), prefixWarning)
 }
 
-// Println calls Output to print to the standard logger.
+// Warningln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func (l *Logger) Warningln(v ...interface{}) {
 	if l.ignore(LevelWarning) {
@@ -289,6 +295,8 @@ func (l *Logger) Warningln(v ...interface{}) {
 	l.Output(2, fmt.Sprintln(v...), prefixWarning)
 }
 
+// Error calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func (l *Logger) Error(v ...interface{}) {
 	if l.ignore(LevelError) {
 		return
@@ -296,7 +304,7 @@ func (l *Logger) Error(v ...interface{}) {
 	l.Output(2, fmt.Sprint(v...), prefixError)
 }
 
-// Printf calls Output to print to the standard logger.
+// Errorf calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func (l *Logger) Errorf(format string, v ...interface{}) {
 	if l.ignore(LevelError) {
@@ -305,7 +313,7 @@ func (l *Logger) Errorf(format string, v ...interface{}) {
 	l.Output(2, fmt.Sprintf(format, v...), prefixError)
 }
 
-// Println calls Output to print to the standard logger.
+// Errorln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func (l *Logger) Errorln(v ...interface{}) {
 	if l.ignore(LevelError) {
@@ -314,31 +322,31 @@ func (l *Logger) Errorln(v ...interface{}) {
 	l.Output(2, fmt.Sprintln(v...), prefixError)
 }
 
-// Fatal is equivalent to l.Print() followed by a call to os.Exit(1).
+// Fatal calls Output to print to the standard logger.
+// Arguments are handled in the manner of fmt.Print.
 func (l *Logger) Fatal(v ...interface{}) {
 	if l.ignore(LevelFatal) {
 		return
 	}
 	l.Output(2, fmt.Sprint(v...), prefixFatal)
-	os.Exit(1)
 }
 
-// Fatalf is equivalent to l.Printf() followed by a call to os.Exit(1).
+// Fatalf calls Output to print to the standard logger.
+// Arguments are handled in the manner of fmt.Printf.
 func (l *Logger) Fatalf(format string, v ...interface{}) {
 	if l.ignore(LevelFatal) {
 		return
 	}
 	l.Output(2, fmt.Sprintf(format, v...), prefixFatal)
-	os.Exit(1)
 }
 
-// Fatalln is equivalent to l.Println() followed by a call to os.Exit(1).
+// Fatalln calls Output to print to the standard logger.
+// Arguments are handled in the manner of fmt.Println.
 func (l *Logger) Fatalln(v ...interface{}) {
 	if l.ignore(LevelFatal) {
 		return
 	}
 	l.Output(2, fmt.Sprintln(v...), prefixFatal)
-	os.Exit(1)
 }
 
 // Panic is equivalent to l.Print() followed by a call to panic().
@@ -376,6 +384,20 @@ func (l *Logger) SetFlags(flag int) {
 	l.flag = flag
 }
 
+// Levels returns the levels for the logger.
+func (l *Logger) Levels() int {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.level
+}
+
+// SetLevels sets the levels for the logger.
+func (l *Logger) SetLevels(level int) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.level = level
+}
+
 // SetOutput sets the output destination for the standard logger.
 func SetOutput(w io.Writer) {
 	std.mu.Lock()
@@ -391,6 +413,16 @@ func Flags() int {
 // SetFlags sets the output flags for the standard logger.
 func SetFlags(flag int) {
 	std.SetFlags(flag)
+}
+
+// Levels returns the levels for the standard logger.
+func Levels() int {
+	return std.Levels()
+}
+
+// SetLevels sets the levels for the standard logger.
+func SetLevels(level int) {
+	std.SetLevels(level)
 }
 
 // These functions write to the standard logger.
@@ -410,9 +442,11 @@ func Printf(format string, v ...interface{}) {
 // Println calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func Println(v ...interface{}) {
-	std.Output(3, fmt.Sprintln(v...), prefixEmpty)
+	std.Output(2, fmt.Sprintln(v...), prefixEmpty)
 }
 
+// Debug calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func Debug(v ...interface{}) {
 	if std.ignore(LevelDebug) {
 		return
@@ -420,7 +454,7 @@ func Debug(v ...interface{}) {
 	std.Output(2, fmt.Sprint(v...), prefixDebug)
 }
 
-// Printf calls Output to print to the standard logger.
+// Debugf calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func Debugf(format string, v ...interface{}) {
 	if std.ignore(LevelDebug) {
@@ -429,7 +463,7 @@ func Debugf(format string, v ...interface{}) {
 	std.Output(2, fmt.Sprintf(format, v...), prefixDebug)
 }
 
-// Println calls Output to print to the standard logger.
+// Debugln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func Debugln(v ...interface{}) {
 	if std.ignore(LevelDebug) {
@@ -438,6 +472,8 @@ func Debugln(v ...interface{}) {
 	std.Output(2, fmt.Sprintln(v...), prefixDebug)
 }
 
+// Info calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func Info(v ...interface{}) {
 	if std.ignore(LevelInfo) {
 		return
@@ -445,7 +481,7 @@ func Info(v ...interface{}) {
 	std.Output(2, fmt.Sprint(v...), prefixInfo)
 }
 
-// Printf calls Output to print to the standard logger.
+// Infof calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func Infof(format string, v ...interface{}) {
 	if std.ignore(LevelInfo) {
@@ -454,7 +490,7 @@ func Infof(format string, v ...interface{}) {
 	std.Output(2, fmt.Sprintf(format, v...), prefixInfo)
 }
 
-// Println calls Output to print to the standard logger.
+// Infoln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func Infoln(v ...interface{}) {
 	if std.ignore(LevelInfo) {
@@ -463,6 +499,8 @@ func Infoln(v ...interface{}) {
 	std.Output(2, fmt.Sprintln(v...), prefixInfo)
 }
 
+// Warning calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func Warning(v ...interface{}) {
 	if std.ignore(LevelWarning) {
 		return
@@ -470,7 +508,7 @@ func Warning(v ...interface{}) {
 	std.Output(2, fmt.Sprint(v...), prefixWarning)
 }
 
-// Printf calls Output to print to the standard logger.
+// Warningf calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func Warningf(format string, v ...interface{}) {
 	if std.ignore(LevelWarning) {
@@ -479,7 +517,7 @@ func Warningf(format string, v ...interface{}) {
 	std.Output(2, fmt.Sprintf(format, v...), prefixWarning)
 }
 
-// Println calls Output to print to the standard logger.
+// Warningln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func Warningln(v ...interface{}) {
 	if std.ignore(LevelWarning) {
@@ -488,6 +526,8 @@ func Warningln(v ...interface{}) {
 	std.Output(2, fmt.Sprintln(v...), prefixWarning)
 }
 
+// Error calls l.Output to print to the logger.
+// Arguments are handled in the manner of fmt.Print.
 func Error(v ...interface{}) {
 	if std.ignore(LevelError) {
 		return
@@ -495,7 +535,7 @@ func Error(v ...interface{}) {
 	std.Output(2, fmt.Sprint(v...), prefixError)
 }
 
-// Printf calls Output to print to the standard logger.
+// Errorf calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Printf.
 func Errorf(format string, v ...interface{}) {
 	if std.ignore(LevelError) {
@@ -504,7 +544,7 @@ func Errorf(format string, v ...interface{}) {
 	std.Output(2, fmt.Sprintf(format, v...), prefixError)
 }
 
-// Println calls Output to print to the standard logger.
+// Errorln calls Output to print to the standard logger.
 // Arguments are handled in the manner of fmt.Println.
 func Errorln(v ...interface{}) {
 	if std.ignore(LevelError) {
